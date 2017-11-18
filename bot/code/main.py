@@ -1,0 +1,1 @@
+from hey_admin.main import app
