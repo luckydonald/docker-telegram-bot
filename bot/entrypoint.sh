@@ -9,7 +9,12 @@ function cleanup {
     # remove socket
     echo 'Cleaning up!';
     set -x;
-    rm "${SOCKET_PATH}";
+    if [ -f "${SOCKET_PATH}" ]; then
+        rm "${SOCKET_PATH}" || echo "removing failed"
+        echo "removed socket"
+    else
+        echo "socket gone"
+    fi
 }
 trap cleanup EXIT;
 
