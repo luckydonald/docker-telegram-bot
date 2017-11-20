@@ -7,7 +7,7 @@ install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
 before_script:
   - env | sort
-  - FOLDER="bot"
+  - FOLDER="./bot"
   - dockerfile_dir="python$VERSION/$VARIANT"
   - slash='/'; image="luckydonald${slash}telegram-bot:python${VERSION}-${VARIANT//$slash/-}"
 script:
@@ -17,6 +17,7 @@ script:
       set -x
       ls -lah .
       ls -lah $FOLDER
+      ls -lah bot/entrypoint.sh
       travis_retry docker build --build-arg FOLDER="$FOLDER" -t "$image" $dockerfile_dir
       ~/official-images/test/run.sh "$image"
       # travis_retry docker push "$image"
