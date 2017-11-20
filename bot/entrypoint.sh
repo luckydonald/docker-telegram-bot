@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e;
+set -o pipefail; # If set, the return value of a pipeline is the value of the last (rightmost) command to exit with a non-zero status, or zero if all commands in the pipeline exit successfully.
 
 SOCKET_PATH="/sockets/bots/${URL_PATH}.sock";
 CMD="/usr/local/bin/uwsgi";
