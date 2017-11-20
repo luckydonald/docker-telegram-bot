@@ -10,7 +10,7 @@ if [ "${1:0:1}" == '-' ]; then
     # -v; -SL; -f arg; etc will work, but not arg1 arg2
     echo "command is flag, using uwsgi"
     set -- /usr/local/bin/uwsgi "$@"
-elif [ -n "${1}" ]; then
+elif [ $# -eq 0 ]; then
     # empty argument call
     echo "command is empty, using uwsgi"
     set -- /usr/local/bin/uwsgi
