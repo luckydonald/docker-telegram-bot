@@ -7,9 +7,8 @@ install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
 before_script:
   - env | sort
-  # go inside the correct build file
   - FOLDER="$PWD/bot"
-  - cd "python$VERSION/$VARIANT"
+  - dockerfile_dir="python$VERSION/$VARIANT"
   - slash='/'; image="luckydonald${slash}telegram-bot:python${VERSION}-${VARIANT//$slash/-}"
 script:
   - |
@@ -18,13 +17,13 @@ script:
       set -x
       ls -lah .
       ls -lah $FOLDER
-      travis_retry docker build --build-arg FOLDER="$FOLDER" -t "$image" .
+      travis_retry docker build --build-arg FOLDER="$FOLDER" -t "$image" $dockerfile_dir
       ~/official-images/test/run.sh "$image"
       # travis_retry docker push "$image"
       if [ -d onbuild ]; then
         onbuildFrom="$(awk 'toupper($1) == "FROM" { print $2; exit }' onbuild/Dockerfile)"
         docker tag "$image" "$onbuildFrom"
-        docker build --build-arg FOLDER="$FOLDER" -t "$image-onbuild" onbuild
+        docker build --build-arg FOLDER="$FOLDER" -t "$image-onbuild" $dockerfile_dir/onbuild
         ~/official-images/test/run.sh "$image-onbuild"
         # travis_retry docker push "$image-onbuild"
       fi
