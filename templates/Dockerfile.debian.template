@@ -2,7 +2,8 @@ FROM python:%%PLACEHOLDER%%
 
 MAINTAINER luckydonald
 LABEL maintainer="luckydonald"
-LABEL url="https://github.com/luckydonald/docker-telegram-bot"
+LABEL url_github="https://github.com/luckydonald/docker-telegram-bot"
+LABEL url_docker="https://hub.docker.com/r/luckydonald/telegram-bot/"
 
 ARG FOLDER
 ARG GROUP_UID=1020
