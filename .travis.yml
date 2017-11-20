@@ -19,13 +19,13 @@ script:
       ls -lah $FOLDER
       ls -lah bot/entrypoint.sh
       ls -lah $FOLDER/entrypoint.sh
-      travis_retry docker build --build-arg FOLDER="$FOLDER" -t "$image" $dockerfile_dir
+      travis_retry docker build --build-arg FOLDER="$FOLDER" -t "$image" -f $dockerfile_dir/Dockerfile .
       ~/official-images/test/run.sh "$image"
       # travis_retry docker push "$image"
       if [ -d onbuild ]; then
         onbuildFrom="$(awk 'toupper($1) == "FROM" { print $2; exit }' onbuild/Dockerfile)"
         docker tag "$image" "$onbuildFrom"
-        docker build --build-arg FOLDER="$FOLDER" -t "$image-onbuild" $dockerfile_dir/onbuild
+        docker build --build-arg FOLDER="$FOLDER" -t "$image-onbuild" $dockerfile_dir/onbuild/Dockerfile .
         ~/official-images/test/run.sh "$image-onbuild"
         # travis_retry docker push "$image-onbuild"
       fi
