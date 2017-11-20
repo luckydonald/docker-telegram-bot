@@ -10,6 +10,7 @@ before_script:
   - FOLDER="./bot"
   - dockerfile_dir="python$VERSION/$VARIANT"
   - slash='/'; image="luckydonald${slash}telegram-bot:python${VERSION}-${VARIANT//$slash/-}"
+  - alias run_test="~/official-images/test/run.sh --config ~/official-images/test/config.sh --config ./test_config.sh"
 script:
   - |
     (
@@ -20,13 +21,13 @@ script:
       ls -lah bot/entrypoint.sh
       ls -lah $FOLDER/entrypoint.sh
       travis_retry docker build --build-arg FOLDER="$FOLDER" -t "$image" -f $dockerfile_dir/Dockerfile .
-      ~/official-images/test/run.sh "$image"
+      run_test "$image"
       # travis_retry docker push "$image"
       if [ -d onbuild ]; then
         onbuildFrom="$(awk 'toupper($1) == "FROM" { print $2; exit }' onbuild/Dockerfile)"
         docker tag "$image" "$onbuildFrom"
         docker build --build-arg FOLDER="$FOLDER" -t "$image-onbuild" $dockerfile_dir/onbuild/Dockerfile .
-        ~/official-images/test/run.sh "$image-onbuild"
+        run_test "$image-onbuild"
         # travis_retry docker push "$image-onbuild"
       fi
     )
