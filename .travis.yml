@@ -7,7 +7,7 @@ install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
 before_script:
   - env | sort
-  - FOLDER="$PWD/bot"
+  - FOLDER="bot"
   - dockerfile_dir="python$VERSION/$VARIANT"
   - slash='/'; image="luckydonald${slash}telegram-bot:python${VERSION}-${VARIANT//$slash/-}"
 script:
