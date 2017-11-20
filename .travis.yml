@@ -18,6 +18,7 @@ script:
       ls -lah .
       ls -lah $FOLDER
       ls -lah bot/entrypoint.sh
+      ls -lah $FOLDER/entrypoint.sh
       travis_retry docker build --build-arg FOLDER="$FOLDER" -t "$image" $dockerfile_dir
       ~/official-images/test/run.sh "$image"
       # travis_retry docker push "$image"
