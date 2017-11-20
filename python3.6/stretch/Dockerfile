@@ -59,6 +59,7 @@ ENTRYPOINT ["/entrypoint.sh"]
 HEALTHCHECK CMD ["/healthcheck.sh", "--timeout", "5"]
 
 
+RUN echo "$$FOLDER: $FOLDER"
 COPY $FOLDER/entrypoint.sh      /
 COPY $FOLDER/healthcheck.sh     /
 COPY $FOLDER/uwsgi.ini          /config/
