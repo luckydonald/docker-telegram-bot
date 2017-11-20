@@ -8,6 +8,7 @@ install:
 before_script:
   - env | sort
   # go inside the correct build file
+  - FOLDER="$PWD/bot"
   - cd "python$VERSION/$VARIANT"
   - slash='/'; image="luckydonald${slash}telegram-bot:python${VERSION}-${VARIANT//$slash/-}"
 script:
