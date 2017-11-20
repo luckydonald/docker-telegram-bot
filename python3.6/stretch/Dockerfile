@@ -1,0 +1,67 @@
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "update.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
+
+FROM python:3.6-stretch
+
+MAINTAINER luckydonald
+LABEL maintainer="luckydonald"
+LABEL url_github="https://github.com/luckydonald/docker-telegram-bot"
+LABEL url_docker="https://hub.docker.com/r/luckydonald/telegram-bot/"
+
+ARG FOLDER
+ARG GROUP_UID=1020
+ARG USER_UID=1020
+ARG GOSU_VERSION=1.10
+ARG GOSU_KEY=B42F6819007F00F88E364FD4036A9C25BF357DD4
+ARG UWSGICURL_VERSION=master
+# latest GOSU_VERSION: https://github.com/tianon/gosu/releases
+
+# copy that into the container
+ENV GROUP_UID $GROUP_UID
+ENV USER_UID $USER_UID
+# Sane defaults for pip
+ENV PIP_NO_CACHE_DIR off
+ENV PIP_DISABLE_PIP_VERSION_CHECK on
+
+# To force docker to build the RUN step again, change this value.
+ARG DOCKER_CACHE_KILLER=2
+
+RUN set -x \
+    # make überstart executable
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends \
+    # Install nginx, and stuff
+        ca-certificates \
+    # utilities
+        nano \
+    # install python wsgi
+    && pip install --upgrade pip -e "git://github.com/luckydonald-forks/uwsgi-tools.git@$UWSGICURL_VERSION#egg=uwsgi-tools" \
+    && rm -rfv /var/lib/apt/lists/* \
+    # install gosu (root stepdown)
+    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
+    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys $GOSU_KEY \
+    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+    && rm -rfv "$GNUPGHOME" /usr/local/bin/gosu.asc \
+    && chmod +x /usr/local/bin/gosu \
+    && groupadd -r uwsgi --gid ${GROUP_UID} && useradd -r -g uwsgi uwsgi --uid ${USER_UID} \
+    # test gosu
+    && gosu uwsgi true
+
+WORKDIR /app
+ENTRYPOINT ["/entrypoint.sh"]
+HEALTHCHECK --start-period=5s CMD ["/healthcheck.sh", "--timeout", "5"]
+
+
+COPY $FOLDER/entrypoint.sh      /
+COPY $FOLDER/healthcheck.sh     /
+COPY $FOLDER/uwsgi.ini          /config/
+COPY $FOLDER/requirements.txt   /config/
+RUN chmod +x /entrypoint.sh /healthcheck.sh && pip install -r /config/requirements.txt
+
+COPY $FOLDER/code /app
