@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
-shopt -s nullglob
+set -e;
+declare -A blacklist=(
+ [bot]=1  [templates]=1
+)
+# set -x;
+set -o nounset;  # Treat undefined variables as errors, not as null.
+set -o pipefail; # If set, the return value of a pipeline is the value of the last (rightmost) command to exit with a non-zero status, or zero if all commands in the pipeline exit successfully.
+set -o errtrace;
+shopt -s nullglob;
 
-cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
+
+# cd "$(dirname "$(readlink -f "$BASH_SOURCE")")" # todo?
 
 versions=( "$@" )
 if [ ${#versions[@]} -eq 0 ]; then
@@ -23,13 +31,30 @@ generated_warning() {
 
 travisEnv=
 appveyorEnv=
-for version in "${versions[@]}"; do
+readme=
+echo "versions:" ${versions[@]};
+for folder in "${versions[@]}"; do
+    if [[ -n "${blacklist[$folder]:-}" ]]; then
+        echo "Skipping $folder, blacklist"
+        continue
+    fi
+    version=${folder#python}
+    if [ "python$version" != "$folder" ]; then
+		echo "Skipping $folder, not python*"
+        continue
+	fi
+
+    echo "Trying $version"
+
+    # check if is '-rc' version
 	rcVersion="${version%-rc}"
+	rcVersion="${rcVersion#python}"
 	rcGrepV='-v'
-	if [ "$rcVersion" != "$version" ]; then
+	if [ "$rcVersion" != "${version#python}" ]; then
 		rcGrepV=
 	fi
 
+    # get possible versions, via the tags on github.
 	possibles=( $(
 		{
 			git ls-remote --tags https://github.com/python/cpython.git "refs/tags/v${rcVersion}.*" \
@@ -41,8 +66,9 @@ for version in "${versions[@]}"; do
 				| grep '<a href="'"$rcVersion." \
 				| sed -r 's!.*<a href="([^"/]+)/?".*!\1!' \
 				|| :
-		} | sort -ruV
+		} | sort -ruV  # todo
 	) )
+	echo "possibles: ${possibles[@]}";
 	fullVersion=
 	for possible in "${possibles[@]}"; do
 		possibleVersions=( $(
@@ -77,18 +103,26 @@ for version in "${versions[@]}"; do
 		{wheezy,jessie,stretch}{/slim,/onbuild,} \
 		windows/{windowsservercore,nanoserver} \
 	; do
-		dir="$version/$v"
+		dir="python$version/$v"
 		variant="$(basename "$v")"
         echo "dir: $dir"
+        echo "version: $version"
         echo "variant: $variant"
-		[ -d "$dir" ] || continue
+
+		# check if exists
+		if [ ! -d "$dir" ]; then
+		    echo "folder: not found, skipping"
+		    continue
+        fi
+        echo "folder: found, let's go"
 
 		case "$variant" in
 			slim|onbuild|windowsservercore) template="$variant"; tag="$(basename "$(dirname "$dir")")" ;;
 			alpine*) template='alpine'; tag="${variant#alpine}" ;;
 			*) template='debian'; tag="$variant" ;;
 		esac
-		template="Dockerfile.${template}.template"
+		template="templates/Dockerfile.${template}.template"
+		echo "template: $template"
 
 		if [[ "$version" == 2.* ]]; then
 			echo "  TODO: vimdiff ${versions[-1]}/$v/Dockerfile $version/$v/Dockerfile"
@@ -112,9 +146,15 @@ for version in "${versions[@]}"; do
 		esac
 	done
 done
+echo "=== <travisEnv> ==="
+echo $travisEnv
+echo "=== </travisEnv> ==="
 
-travis="$(awk -v 'RS=\n\n' '$1 == "env:" { $0 = "env:'"$travisEnv"'" } { printf "%s%s", $0, RS }' .travis.yml)"
+travis="$(awk -v 'RS=\n' '$1 == "env:" { $0 = "env:'"$travisEnv"'" } { printf "%s%s", $0, RS }' .travis.yml)"
+echo "$travis" > .travis.yml
+travis="$(awk '!a[$0]++' .travis.yml)"
 echo "$travis" > .travis.yml
 
-#appveyor="$(awk -v 'RS=\n\n' '$1 == "environment:" { $0 = "environment:\n  matrix:'"$appveyorEnv"'" } { printf "%s%s", $0, RS }' .appveyor.yml)"
+
+#appveyor="$(awk -v 'RS=\n' '$1 == "environment:" { $0 = "environment:\n  matrix:'"$appveyorEnv"'" } { printf "%s%s", $0, RS }' .appveyor.yml)"
 #echo "$appveyor" > .appveyor.yml
