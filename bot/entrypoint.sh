@@ -16,11 +16,13 @@ elif [ $# -eq 0 ]; then
 elif [ "${1}" == 'uwsgi' ]; then
     # just uwsgi
     echo "command is just uwsgi"
-    set -- /usr/local/bin/uwsgi
+    shift;  # remove $1
+    set -- /usr/local/bin/uwsgi $@
 fi
 if [ "$1" == '/usr/local/bin/uwsgi' ]; then
     # the expected command
     echo "command is uwsgi executable"
+    shift;  # remove $1
 
     SOCKET_PATH="/sockets/bots/${URL_PATH}.sock";
     CMD="/usr/local/bin/uwsgi";
