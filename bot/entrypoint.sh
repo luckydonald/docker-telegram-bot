@@ -29,7 +29,7 @@ if [ "$1" == '/usr/local/bin/uwsgi' ]; then
     function cleanup {
         # remove socket
         echo 'Cleaning up!';
-        set -x;
+        set -ex;
         if [ -e "${SOCKET_PATH}" ]; then
             [ ! -S "${SOCKET_PATH}" ] || echo "is socket"
             rm "${SOCKET_PATH}" || echo "removing failed"
