@@ -8,8 +8,8 @@ FROM luckydonald/telegram-bot:3.6-stretch
 
 MAINTAINER luckydonald
 LABEL maintainer="luckydonald"
-LABEL url_github="https://github.com/luckydonald/docker-telegram-bot"
-LABEL url_docker="https://hub.docker.com/r/luckydonald/telegram-bot/"
+LABEL url.github="https://github.com/luckydonald/docker-telegram-bot"
+LABEL url.docker="https://hub.docker.com/r/luckydonald/telegram-bot/"
 
 RUN mkdir /app/
 WORKDIR /app/
