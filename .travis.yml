@@ -11,7 +11,7 @@ before_install:
 install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
 before_script:
-  - [ "$MODE" != "build" ] ||  sudo apt-get -y install docker-ce
+  - [ ! "$MODE" == "build" ] ||  sudo apt-get -y install docker-ce
   - docker version
   - docker --version
   - env | sort
