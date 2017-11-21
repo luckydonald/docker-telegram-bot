@@ -59,8 +59,7 @@ RUN set -x \
     && gosu uwsgi true
 
 WORKDIR /app
-ENTRYPOINT ["/entrypoint.sh"]
-# HEALTHCHECK --start-period=5s CMD ["/healthcheck.sh", "--timeout", "5"]
+HEALTHCHECK --start-period=20s CMD ["/healthcheck.sh", "--timeout", "5"]
 HEALTHCHECK CMD ["/healthcheck.sh", "--timeout", "5"]
 
 

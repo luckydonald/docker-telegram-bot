@@ -12,6 +12,7 @@ before_script:
   - slash='/'; image="luckydonald${slash}telegram-bot:python${VERSION}-${VARIANT//$slash/-}"
   - docker --version
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - exit 2;
 script:
   - |
     (
