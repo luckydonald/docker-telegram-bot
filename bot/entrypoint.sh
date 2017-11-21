@@ -2,7 +2,7 @@
 set -e;
 set -o pipefail; # If set, the return value of a pipeline is the value of the last (rightmost) command to exit with a non-zero status, or zero if all commands in the pipeline exit successfully.
 set -o nounset;  # Treat undefined variables as errors, not as null.
-first_arg = ${1:-};
+first_arg=${1:-};
 if [ "${first_arg:0:1}" == '-' ]; then
     # this if will check if the first argument is a flag
     # but only works if all arguments require a hyphenated flag
