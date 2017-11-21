@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e;
-set -x;
 set -o pipefail; # If set, the return value of a pipeline is the value of the last (rightmost) command to exit with a non-zero status, or zero if all commands in the pipeline exit successfully.
 set -o nounset;  # Treat undefined variables as errors, not as null.
 
@@ -42,11 +41,9 @@ if [ "$1" == '/usr/local/bin/uwsgi' ]; then
 
     [ ! -d "${SOCKET_PATH}" ] || chown -R $USER_UID:$GROUP_UID /sockets/bots/;
     echo "exec gosu $USER_UID:$GROUP_UID $CMD $ARGS";
-    set -ex;
     trap cleanup EXIT;
     exec gosu $USER_UID:$GROUP_UID $CMD $ARGS;
 else
-    echo "command defaulted to input";
     # else default to run whatever the user wanted like "bash"
     exec "$@"
 fi
