@@ -11,10 +11,6 @@ LABEL maintainer="luckydonald"
 LABEL url.github="https://github.com/luckydonald/docker-telegram-bot"
 LABEL url.docker="https://hub.docker.com/r/luckydonald/telegram-bot/"
 
-RUN mkdir /app/
-WORKDIR /app/
-
-
 ONBUILD COPY $FOLDER/requirements.txt   /config/
 ONBUILD RUN pip install --no-cache-dir -r /config/requirements.txt
 

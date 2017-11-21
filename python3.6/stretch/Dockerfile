@@ -34,14 +34,15 @@ LABEL git.commit=$GIT_COMMIT
 LABEL git.message=$GIT_MESSAGE
 
 RUN set -x \
-    # make überstart executable
+    && mkdir -p /app \
+    # install stuff we need
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends \
-    # Install nginx, and stuff
+    # https
         ca-certificates \
     # utilities
         nano \
-    # install python wsgi
+    # install latest pip and latest uwsgi curl
     && pip install --upgrade pip -e "git://github.com/luckydonald-forks/uwsgi-tools.git@$UWSGICURL_VERSION#egg=uwsgi-tools" \
     && rm -rfv /var/lib/apt/lists/* \
     # install gosu (root stepdown)
