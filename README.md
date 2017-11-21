@@ -3,7 +3,15 @@ A flask based telegram bot docker container.
 
 [![build passing](https://travis-ci.org/luckydonald/docker-telegram-bot.svg?branch=master)](https://travis-ci.org/luckydonald/docker-telegram-bot)
 
+###### [Docker Hub](https://hub.docker.com/r/luckydonald/telegram-bot/)
 
+
+#### Image tags
+
+- `python3.6-stretch`
+- `python3.6-stretch-onbuild`
+
+_Need something else? Create an issue!_
 
 
 ####  How to update the containers
