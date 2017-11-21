@@ -37,8 +37,7 @@ script:
         docker pull "$image"
       fi
       ~/official-images/test/run.sh --config ~/official-images/test/config.sh --config ./test_config.sh "$image"
-      if [ "$TRAVIS_BRANCH" == "master" && "$MODE" == "build" ]; then
-          docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      if [ "$TRAVIS_BRANCH" == "master" -a "$MODE" == "build" ]; then
           travis_retry docker push "$image"
       # onbuild
       onbuild_dir="$dockerfile_dir/onbuild"
@@ -51,7 +50,7 @@ script:
           docker pull "$image-onbuild"
         fi
         ~/official-images/test/run.sh --config ~/official-images/test/config.sh --config ./test_config.sh "$image-onbuild"
-        if [ "$TRAVIS_BRANCH" == "master" && "$MODE" == "build" ]; then
+        if [ "$TRAVIS_BRANCH" == "master" -a "$MODE" == "build" ]; then
           travis_retry docker push "$image-onbuild"
         fi # travis
       fi # onbuild
