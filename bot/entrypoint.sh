@@ -48,6 +48,5 @@ if [ "$1" == '/usr/local/bin/uwsgi' ]; then
 else
     echo "command defaulted to input";
     # else default to run whatever the user wanted like "bash"
-    echo "exec $@"
     exec "$@"
 fi
