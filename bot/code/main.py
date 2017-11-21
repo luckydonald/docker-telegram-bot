@@ -1,1 +1,1 @@
-from hey_admin.main import app
+from example.main import app
