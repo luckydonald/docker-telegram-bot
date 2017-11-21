@@ -2,17 +2,18 @@ language: bash
 services: docker
 
 env:
-  - VERSION=3.6 VARIANT=stretch
+  - VERSION=3.6 VARIANT=stretch MODE=tests
+  - VERSION=3.6 VARIANT=stretch MODE=build
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
   - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
   - sudo apt-get update
-  - sudo apt-get -y install docker-ce
-  - docker version
-  - docker --version
 install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
 before_script:
+  - [ "$MODE" != "build" ] ||  sudo apt-get -y install docker-ce
+  - docker version
+  - docker --version
   - env | sort
   - FOLDER="./bot"
   - dockerfile_dir="python$VERSION/$VARIANT"
@@ -27,20 +28,27 @@ script:
       ls -lah $FOLDER
       ls -lah bot/entrypoint.sh
       ls -lah $FOLDER/entrypoint.sh
-      travis_retry docker build --build-arg FOLDER="$FOLDER" -t "$image" -f $dockerfile_dir/Dockerfile .
+      if [ "$MODE" == "build" ] ; then
+        travis_retry docker build --build-arg FOLDER="$FOLDER" -t "$image" -f $dockerfile_dir/Dockerfile .
+      else
+        docker pull "$image"
+      fi
       ~/official-images/test/run.sh --config ~/official-images/test/config.sh --config ./test_config.sh "$image"
-      if [ "$TRAVIS_BRANCH" == "master" ]; then
+      if [ "$TRAVIS_BRANCH" == "master" && "$MODE" == "build" ]; then
           docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
           travis_retry docker push "$image"
-      fi
       # onbuild
       onbuild_dir="$dockerfile_dir/onbuild"
       if [ -d $onbuild_dir ]; then
         onbuildFrom="$(awk 'toupper($1) == "FROM" { print $2; exit }' $onbuild_dir/Dockerfile)"
         docker tag "$image" "$onbuildFrom"
-        docker build --build-arg FOLDER="$FOLDER" -t "$image-onbuild" -f $onbuild_dir/Dockerfile .
+        if [ "$MODE" == "build" ] ; then
+          docker build --build-arg FOLDER="$FOLDER" -t "$image-onbuild" -f $onbuild_dir/Dockerfile .
+        else
+          docker pull "$image-onbuild"
+        fi
         ~/official-images/test/run.sh --config ~/official-images/test/config.sh --config ./test_config.sh "$image-onbuild"
-        if [ "$TRAVIS_BRANCH" == "master" ]; then
+        if [ "$TRAVIS_BRANCH" == "master" && "$MODE" == "build" ]; then
           travis_retry docker push "$image-onbuild"
         fi # travis
       fi # onbuild

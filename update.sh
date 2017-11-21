@@ -141,7 +141,8 @@ for folder in "${versions[@]}"; do
 				appveyorEnv='\n    - version: '"$version"'\n      variant: '"$variant$appveyorEnv"
 				;;
 			*)
-				travisEnv='\n  - VERSION='"$version VARIANT=$v$travisEnv"
+				travisEnv='\n  - VERSION='"$version VARIANT=$v MODE=build$travisEnv"
+				travisEnv='\n  - VERSION='"$version VARIANT=$v MODE=tests$travisEnv"
 				;;
 		esac
 	done
@@ -149,11 +150,9 @@ done
 echo "=== <travisEnv> ==="
 echo $travisEnv
 echo "=== </travisEnv> ==="
+travis=$(sed '/env:/,/before_install:/c\env:'"$travisEnv"'\nbefore_install:' .travis.yml)
+echo "$travis" > .travis.yml
 
-travis="$(awk -v 'RS=\n' '$1 == "env:" { $0 = "env:'"$travisEnv"'" } { printf "%s%s", $0, RS }' .travis.yml)"
-echo "$travis" > .travis.yml
-travis="$(awk '!a[$0]++' .travis.yml)"
-echo "$travis" > .travis.yml
 
 
 #appveyor="$(awk -v 'RS=\n' '$1 == "environment:" { $0 = "environment:\n  matrix:'"$appveyorEnv"'" } { printf "%s%s", $0, RS }' .appveyor.yml)"
