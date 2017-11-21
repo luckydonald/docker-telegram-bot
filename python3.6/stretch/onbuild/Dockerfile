@@ -17,3 +17,5 @@ WORKDIR /app/
 
 ONBUILD COPY $FOLDER/requirements.txt   /config/
 ONBUILD RUN pip install --no-cache-dir -r /config/requirements.txt
+
+ONBUILD COPY $FOLDER/code /app
