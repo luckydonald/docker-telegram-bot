@@ -11,10 +11,6 @@ before_install:
 install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
 before_script:
-  - |
-    (
-      [ ! "$MODE" == "build" ] || sudo apt-get -y install docker-ce
-    )
   - docker version
   - docker --version
   - env | sort
@@ -32,7 +28,7 @@ script:
       ls -lah bot/entrypoint.sh
       ls -lah $FOLDER/entrypoint.sh
       if [ "$MODE" == "build" ] ; then
-        travis_retry docker build --build-arg FOLDER="$FOLDER" -t "$image" -f $dockerfile_dir/Dockerfile .
+        travis_retry docker build --build-arg FOLDER="$FOLDER" --build-arg GIT_COMMIT="$TRAVIS_COMMIT" --build-arg GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image" -f $dockerfile_dir/Dockerfile .
       else
         docker pull "$image"
       fi
@@ -45,7 +41,7 @@ script:
         onbuildFrom="$(awk 'toupper($1) == "FROM" { print $2; exit }' $onbuild_dir/Dockerfile)"
         docker tag "$image" "$onbuildFrom"
         if [ "$MODE" == "build" ] ; then
-          docker build --build-arg FOLDER="$FOLDER" -t "$image-onbuild" -f $onbuild_dir/Dockerfile .
+          docker build --build-arg FOLDER="$FOLDER"  --build-arg GIT_COMMIT="$TRAVIS_COMMIT" --build-arg GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image-onbuild" -f $onbuild_dir/Dockerfile .
         else
           docker pull "$image-onbuild"
         fi
