@@ -13,6 +13,10 @@ A flask based telegram bot docker container.
 
 _Need something else? Create an issue!_
 
+#### Environment variables
+###### `HEALTHCHECK_URL`:
+Which url to call?
+Default: `/healthcheck`
 
 ####  How to update the containers
 
