@@ -31,12 +31,15 @@ script:
       ls -lah $FOLDER
       ls -lah bot/entrypoint.sh
       ls -lah $FOLDER/entrypoint.sh
+      # build/pull
       if [ "$MODE" == "build" ] ; then
         travis_retry docker build --build-arg FOLDER="$FOLDER" --build-arg GIT_COMMIT="$TRAVIS_COMMIT" --build-arg GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image" -f $dockerfile_dir/Dockerfile .
       else
         docker pull "$image"
       fi
+      # test
       ~/official-images/test/run.sh --config ~/official-images/test/config.sh --config ./test_config.sh "$image"
+      # push/ignore
       if [ "$TRAVIS_BRANCH" == "master" -a "$MODE" == "build" ]; then
           travis_retry docker push "$image"
       fi
@@ -45,12 +48,15 @@ script:
       if [ -d $onbuild_dir ]; then
         onbuildFrom="$(awk 'toupper($1) == "FROM" { print $2; exit }' $onbuild_dir/Dockerfile)"
         docker tag "$image" "$onbuildFrom"
+        # build/pull
         if [ "$MODE" == "build" ] ; then
           docker build --build-arg FOLDER="$FOLDER"  --build-arg GIT_COMMIT="$TRAVIS_COMMIT" --build-arg GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image-onbuild" -f $onbuild_dir/Dockerfile .
         else
           docker pull "$image-onbuild"
         fi
+        # tests
         ~/official-images/test/run.sh --config ~/official-images/test/config.sh --config ./test_config.sh "$image-onbuild"
+        # push/ignore
         if [ "$TRAVIS_BRANCH" == "master" -a "$MODE" == "build" ]; then
           travis_retry docker push "$image-onbuild"
         fi # travis
