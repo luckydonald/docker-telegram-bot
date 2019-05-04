@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e;
 declare -A blacklist=(
- [bot]=1  [templates]=1
+ [bot]=1  [templates]=1  [examples]=1
 )
 # set -x;
 set -o nounset;  # Treat undefined variables as errors, not as null.
@@ -121,7 +121,7 @@ for folder in "${versions[@]}"; do
 			alpine*) template='alpine'; tag="${variant#alpine}" ;;
 			*) template='debian'; tag="$variant" ;;
 		esac
-		template="templates/Dockerfile.${template}.template"
+		template="templates/Dockerfile.socket.${template}.template"
 		echo "template: $template"
 
 		if [[ "$version" == 2.* ]]; then
@@ -131,8 +131,10 @@ for folder in "${versions[@]}"; do
 		fi
 
 		sed -ri \
-			-e 's/^(FROM python):.*/\1:'"$version-$tag"'/' \
-			-e 's/^(FROM luckydonald\/telegram-bot):.*/\1:'"$version-$tag"'/' \
+			-e 's/^(FROM python):%%PLACEHOLDER%%/\1:'"$version-$tag"'/' \
+			-e 's/^(FROM luckydonald\/telegram-bot):%%PLACEHOLDER%%/\1:'"$version-$tag"'/' \
+			-e 's!^(LABEL docker\.image\.base="luckydonald/telegram-bot:)%%PLACEHOLDER%%(")!\1'"${version}-${tag}"'\2!' \
+			-e 's!^(LABEL docker\.image\.base="luckydonald/telegram-bot:)%%PLACEHOLDER%%(-onbuild")!\1'"${version}-${tag}"'\2!' \
 			"$dir/Dockerfile"
 
 		case "$v" in

@@ -10,6 +10,8 @@ A flask based telegram bot docker container.
 
 - `python3.6-stretch`
 - `python3.6-stretch-onbuild`
+- `python3.7-stretch`
+- `python3.7-stretch-onbuild`
 
 _Need something else? Create an issue!_
 

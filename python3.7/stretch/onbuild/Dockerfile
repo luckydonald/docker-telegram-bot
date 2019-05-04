@@ -4,9 +4,9 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM luckydonald/telegram-bot:3.6-stretch
+FROM luckydonald/telegram-bot:3.7-stretch
 
-LABEL docker.image.base="luckydonald/telegram-bot:3.6-stretch-onbuild"
+LABEL docker.image.base="luckydonald/telegram-bot:3.7-stretch-onbuild"
 LABEL docker.image.base.author="luckydonald"
 LABEL docker.image.base.url.github="https://github.com/luckydonald/docker-telegram-bot"
 LABEL docker.image.base.url.docker="https://hub.docker.com/r/luckydonald/telegram-bot/"

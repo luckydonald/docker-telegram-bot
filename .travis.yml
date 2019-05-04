@@ -2,6 +2,8 @@ language: bash
 services: docker
 
 env:
+  - VERSION=3.7 VARIANT=stretch MODE=tests
+  - VERSION=3.7 VARIANT=stretch MODE=build
   - VERSION=3.6 VARIANT=stretch MODE=tests
   - VERSION=3.6 VARIANT=stretch MODE=build
 before_install:
