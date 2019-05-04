@@ -31,6 +31,11 @@ _Need something else? Create an issue!_
 Which url to call?
 Default: `/healthcheck`
 
+###### `SOCKET_PATH`:
+Allows to overwrite the place where we expect the socket.  
+Default: `/sockets/bots/${URL_PATH}.sock`
+
+
 ####  How to update the containers
 
 I'll do that, don't worry. But I always forget how to.
