@@ -143,8 +143,8 @@ for folder in "${versions[@]}"; do
 				appveyorEnv='\n    - version: '"$version"'\n      variant: '"$variant$appveyorEnv"
 				;;
 			*)
-				travisEnv='\n  - VERSION='"$version VARIANT=$v MODE=build$travisEnv"
 				travisEnv='\n  - VERSION='"$version VARIANT=$v MODE=tests$travisEnv"
+				travisEnv='\n  - VERSION='"$version VARIANT=$v MODE=build$travisEnv"
 				;;
 		esac
 	done
