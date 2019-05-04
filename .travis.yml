@@ -35,7 +35,7 @@ script:
       ls -lah $FOLDER/entrypoint.sh
       # build/pull
       if [ "$MODE" == "build" ] ; then
-        travis_retry docker build --build-arg FOLDER="$FOLDER" --build-arg GIT_COMMIT="$TRAVIS_COMMIT" --build-arg GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image" -f $dockerfile_dir/Dockerfile .
+        travis_retry docker build --build-arg FOLDER="$FOLDER" --build-arg BASE_IMAGE_GIT_COMMIT="$TRAVIS_COMMIT" --build-arg BASE_IMAGE_GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image" -f $dockerfile_dir/Dockerfile .
       else
         docker pull "$image"
       fi

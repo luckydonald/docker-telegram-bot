@@ -6,12 +6,6 @@
 
 FROM python:3.6-stretch
 
-MAINTAINER luckydonald
-LABEL docker.image.base="luckydonald/telegram-bot:3.6-stretch"
-LABEL docker.image.base.author="luckydonald"
-LABEL docker.image.base.url.github="https://github.com/luckydonald/docker-telegram-bot"
-LABEL docker.image.base.url.docker="https://hub.docker.com/r/luckydonald/telegram-bot/"
-
 ARG FOLDER=.
 ARG GROUP_UID=1020
 ARG USER_UID=1020
@@ -19,20 +13,26 @@ ARG GOSU_VERSION=1.10
 ARG GOSU_KEY=B42F6819007F00F88E364FD4036A9C25BF357DD4
 ARG UWSGICURL_VERSION=master
 # latest GOSU_VERSION: https://github.com/tianon/gosu/releases
-ARG GIT_COMMIT
-ARG GIT_MESSAGE
+ARG BASE_IMAGE_GIT_COMMIT
+ARG BASE_IMAGE_GIT_MESSAGE
 
 # copy that into the container
 ENV GROUP_UID $GROUP_UID
 ENV USER_UID $USER_UID
-ENV GIT_COMMIT $GIT_COMMIT
-ENV GIT_MESSAGE $GIT_MESSAGE
+ENV BASE_IMAGE_GIT_COMMIT $BASE_IMAGE_GIT_COMMIT
+ENV BASE_IMAGE_GIT_MESSAGE $BASE_IMAGE_GIT_MESSAGE
 # Sane defaults for pip
 ENV PIP_NO_CACHE_DIR off
 ENV PIP_DISABLE_PIP_VERSION_CHECK on
 
-LABEL git.commit=$GIT_COMMIT
-LABEL git.message=$GIT_MESSAGE
+MAINTAINER luckydonald
+LABEL docker.image.base="luckydonald/telegram-bot:3.6-stretch"
+LABEL docker.image.base.author="luckydonald"
+LABEL docker.image.base.url.github="https://github.com/luckydonald/docker-telegram-bot"
+LABEL docker.image.base.url.docker="https://hub.docker.com/r/luckydonald/telegram-bot/"
+LABEL docker.image.base.git.commit=$BASE_IMAGE_GIT_COMMIT
+LABEL docker.image.base.git.message=$BASE_IMAGE_GIT_MESSAGE
+
 
 RUN set -x \
     && mkdir -p /app \
