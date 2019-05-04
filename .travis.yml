@@ -3,9 +3,7 @@ services: docker
 
 env:
   - VERSION=3.7 VARIANT=stretch MODE=build
-  - VERSION=3.7 VARIANT=stretch MODE=tests
   - VERSION=3.6 VARIANT=stretch MODE=build
-  - VERSION=3.6 VARIANT=stretch MODE=tests
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
   - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
@@ -45,7 +43,6 @@ script:
       # push/ignore
       if [ "$TRAVIS_BRANCH" == "master" -a "$MODE" == "build" ]; then
           travis_retry docker push "$image"
-          travis_retry docker push "$image"
           travis_retry docker push "$image-$TRAVIS_COMMIT"
           travis_retry docker push "$image-$DATE"
           travis_retry docker push "$image-$DATE-$TRAVIS_COMMIT"
@@ -57,7 +54,7 @@ script:
         docker tag "$image" "$onbuildFrom"
         # build/pull
         if [ "$MODE" == "build" ] ; then
-          docker build --build-arg FOLDER="$FOLDER"  --build-arg GIT_COMMIT="$TRAVIS_COMMIT" --build-arg GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image-onbuild" -t "$image-onbuild-$DATE-$TRAVIS_COMMIT"  -t "$image-onbuild-$DATE"  -t "$image-onbuild-$TRAVIS_COMMIT"  -f $onbuild_dir/Dockerfile .
+          docker build --build-arg FOLDER="$FOLDER"  --build-arg GIT_COMMIT="$TRAVIS_COMMIT" --build-arg GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image-onbuild" -t "$image-$DATE-$TRAVIS_COMMIT-onbuild"  -t "$image-$DATE-onbuild"  -t "$image-$TRAVIS_COMMIT-onbuild"  -f $onbuild_dir/Dockerfile .
         else
           docker pull "$image-onbuild"
         fi
