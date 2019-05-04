@@ -13,6 +13,17 @@ A flask based telegram bot docker container.
 - `python3.7-stretch`
 - `python3.7-stretch-onbuild`
 
+For version pinning we serve the image with the following tag structure:
+- <code>python<i><b>{version}</b></i>-stretch</code>
+- <code>python<i><b>{version}</b></i>-stretch-onbuild</code>
+- <code>python<i><b>{version}</b></i>-stretch-<i><b>{commit}</b></i></code>
+- <code>python<i><b>{version}</b></i>-stretch-<i><b>{commit}</b></i>-onbuild</code>
+- <code>python<i><b>{version}</b></i>-stretch-<i><b>{YYYY-MM-DD}</b></i></code>
+- <code>python<i><b>{version}</b></i>-stretch-<i><b>{YYYY-MM-DD}</b></i>-onbuild</code>
+- <code>python<i><b>{version}</b></i>-stretch-<i><b>{YYYY-MM-DD}</b></i>-<i><b>{commit}</b></i></code>
+- <code>python<i><b>{version}</b></i>-stretch-<i><b>{YYYY-MM-DD}</b></i>-<i><b>{commit}</b></i>-onbuild</code>
+
+
 _Need something else? Create an issue!_
 
 #### Environment variables
