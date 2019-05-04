@@ -8,6 +8,32 @@ FROM luckydonald/telegram-bot:3.6-stretch
 
 LABEL docker.image.base="luckydonald/telegram-bot:3.6-stretch-onbuild"
 
+# deploy script additions
+ONBUILD ARG DEPLOY_GIT_COMMIT=unknown
+ONBUILD ARG DEPLOY_GIT_BRANCH=unknown
+ONBUILD ARG DEPLOY_GIT_BRANCHES=unknown
+ONBUILD ARG DEPLOY_GIT_TAGS=unknown
+ONBUILD ARG DEPLOY_GIT_DATE=unknown
+ONBUILD ARG DEPLOY_RUN_ARGS=unknown
+ONBUILD ARG DEPLOY_RUN_DATE=unknown
+# copy that into the container
+ONBUILD ENV DEPLOY_GIT_COMMIT $DEPLOY_GIT_COMMIT
+ONBUILD ENV DEPLOY_GIT_BRANCH $DEPLOY_GIT_BRANCH
+ONBUILD ENV DEPLOY_GIT_BRANCHES $DEPLOY_GIT_BRANCHES
+ONBUILD ENV DEPLOY_GIT_TAGS $DEPLOY_GIT_TAGS
+ONBUILD ENV DEPLOY_GIT_DATE $DEPLOY_GIT_DATE
+ONBUILD ENV DEPLOY_RUN_ARGS $DEPLOY_RUN_ARGS
+ONBUILD ENV DEPLOY_RUN_DATE $DEPLOY_RUN_DATE
+# add as label for easy access
+ONBUILD LABEL deploy.git.commit=$DEPLOY_GIT_COMMIT
+ONBUILD LABEL deploy.git.branch=$DEPLOY_GIT_BRANCH
+ONBUILD LABEL deploy.git.branches=$DEPLOY_GIT_BRANCHES
+ONBUILD LABEL deploy.git.tags=$DEPLOY_GIT_TAGS
+ONBUILD LABEL deploy.git.date=$DEPLOY_GIT_DATE
+ONBUILD LABEL deploy.run.args=$DEPLOY_RUN_ARGS
+ONBUILD LABEL deploy.run.date=$DEPLOY_RUN_DATE
+
+# automatically install requirements.txt and copy the code folder
 ONBUILD COPY $FOLDER/requirements.txt   /config/
 ONBUILD RUN pip install --no-cache-dir -r /config/requirements.txt
 
