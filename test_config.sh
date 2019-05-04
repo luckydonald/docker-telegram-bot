@@ -7,6 +7,9 @@ imageTests+=(
 testAlias+=(
 	[luckydonald/docker-telegram-bot]='python'
 )
-globalExcludeTests+=(
-    ["cve-2014--shellshock"]=1
+globalTests=(
+	utc
+	# cve-2014--shellshock
+	no-hard-coded-passwords
+	override-cmd
 )
