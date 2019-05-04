@@ -34,8 +34,9 @@ script:
       ls -lah bot/entrypoint.sh
       ls -lah $FOLDER/entrypoint.sh
       # build/pull
+      DATE=$(date +%Y-%m-%d)
       if [ "$MODE" == "build" ] ; then
-        travis_retry docker build --build-arg FOLDER="$FOLDER" --build-arg BASE_IMAGE_GIT_COMMIT="$TRAVIS_COMMIT" --build-arg BASE_IMAGE_GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image" -t "$image-$(date +%Y-%m-%d)-$TRAVIS_COMMIT"  -t "$image-$(date +%Y-%m-%d)"  -t "$image-$TRAVIS_COMMIT" -f $dockerfile_dir/Dockerfile .
+        travis_retry docker build --build-arg FOLDER="$FOLDER" --build-arg BASE_IMAGE_GIT_COMMIT="$TRAVIS_COMMIT" --build-arg BASE_IMAGE_GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image" -t "$image-$DATE-$TRAVIS_COMMIT"  -t "$image-$DATE"  -t "$image-$TRAVIS_COMMIT" -f $dockerfile_dir/Dockerfile .
       else
         docker pull "$image"
       fi
@@ -44,6 +45,10 @@ script:
       # push/ignore
       if [ "$TRAVIS_BRANCH" == "master" -a "$MODE" == "build" ]; then
           travis_retry docker push "$image"
+          travis_retry docker push "$image"
+          travis_retry docker push "$image-$TRAVIS_COMMIT"
+          travis_retry docker push "$image-$DATE"
+          travis_retry docker push "$image-$DATE-$TRAVIS_COMMIT"
       fi
       # onbuild
       onbuild_dir="$dockerfile_dir/onbuild"
@@ -52,7 +57,7 @@ script:
         docker tag "$image" "$onbuildFrom"
         # build/pull
         if [ "$MODE" == "build" ] ; then
-          docker build --build-arg FOLDER="$FOLDER"  --build-arg GIT_COMMIT="$TRAVIS_COMMIT" --build-arg GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image-onbuild" -t "$image-onbuild-$(date +%Y-%m-%d)-$TRAVIS_COMMIT"  -t "$image-onbuild-$(date +%Y-%m-%d)"  -t "$image-onbuild-$TRAVIS_COMMIT"  -f $onbuild_dir/Dockerfile .
+          docker build --build-arg FOLDER="$FOLDER"  --build-arg GIT_COMMIT="$TRAVIS_COMMIT" --build-arg GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image-onbuild" -t "$image-onbuild-$DATE-$TRAVIS_COMMIT"  -t "$image-onbuild-$DATE"  -t "$image-onbuild-$TRAVIS_COMMIT"  -f $onbuild_dir/Dockerfile .
         else
           docker pull "$image-onbuild"
         fi
@@ -61,6 +66,9 @@ script:
         # push/ignore
         if [ "$TRAVIS_BRANCH" == "master" -a "$MODE" == "build" ]; then
           travis_retry docker push "$image-onbuild"
+          travis_retry docker push "$image-$TRAVIS_COMMIT-onbuild"
+          travis_retry docker push "$image-$DATE-onbuild"
+          travis_retry docker push "$image-$DATE-$TRAVIS_COMMIT-onbuild"
         fi # travis
       fi # onbuild
     )
