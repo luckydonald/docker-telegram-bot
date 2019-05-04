@@ -46,6 +46,7 @@ if [ "$1" == '/usr/local/bin/uwsgi' ]; then
     trap cleanup EXIT;
     exec gosu $USER_UID:$GROUP_UID $CMD $ARGS;
 else
-    # else default to run whatever the user wanted like "bash"
+    # else default to run whatever the user wanted like "bash", "echo", ...
+    echo "running your command: > $@"
     exec "$@"
 fi
