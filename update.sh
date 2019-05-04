@@ -140,18 +140,16 @@ for folder in "${versions[@]}"; do
 		case "$v" in
 			*/onbuild) ;;
 			windows/*)
-				appveyorEnv='\n    - version: '"$version"'\n      variant: '"$variant$appveyorEnv"
+				appveyorEnv="$appveyorEnv"'\n    - version: '"$version"'\n      variant: '"$variant"
 				;;
 			*)
-				# travisEnv='\n  - VERSION='"$version VARIANT=$v MODE=tests$travisEnv"
-				travisEnv='\n  - VERSION='"$version VARIANT=$v MODE=build$travisEnv"
+				travisEnv="$travisEnv"'\n  - VERSION='"$version"' VARIANT='"$v"' MODE=build'
+				# travisEnv="$travisEnv"'\n  - VERSION='"$version"' VARIANT='"$v"' MODE=tests'
 				;;
 		esac
 	done
 done
-echo "=== <travisEnv> ==="
-echo $travisEnv
-echo "=== </travisEnv> ==="
+echo -e '=== <travisEnv> ==='"$travisEnv\n"'=== </travisEnv> ==='
 travis=$(sed '/env:/,/before_install:/c\env:'"$travisEnv"'\nbefore_install:' .travis.yml)
 echo "$travis" > .travis.yml
 
