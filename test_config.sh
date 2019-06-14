@@ -11,5 +11,5 @@ globalTests=(
 	utc
 	# cve-2014--shellshock
 	no-hard-coded-passwords
-	override-cmd
+	# override-cmd
 )
