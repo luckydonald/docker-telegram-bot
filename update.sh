@@ -107,7 +107,7 @@ for folder in "${versions[@]}"; do
 
 	for v in \
 		alpine{3.4,3.6} \
-		{wheezy,jessie,stretch}{/slim,/onbuild,} \
+		{wheezy,jessie,stretch,buster}{/slim,/onbuild,} \
 		windows/{windowsservercore,nanoserver} \
 	; do
 	    echo "…"

@@ -4,9 +4,9 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM luckydonald/telegram-bot:3.8.2-stretch
+FROM luckydonald/telegram-bot:3.8-buster
 
-LABEL docker.image.base="luckydonald/telegram-bot:3.8.2-stretch-onbuild"
+LABEL docker.image.base="luckydonald/telegram-bot:3.8-buster-onbuild"
 
 # automatically install requirements.txt and copy the code folder
 ONBUILD COPY $FOLDER/requirements.txt   /config/
