@@ -2,8 +2,11 @@ language: bash
 services: docker
 
 env:
+  - VERSION=3.6.10 VARIANT=stretch MODE=build
   - VERSION=3.6 VARIANT=stretch MODE=build
+  - VERSION=3.7.7 VARIANT=stretch MODE=build
   - VERSION=3.7 VARIANT=stretch MODE=build
+  - VERSION=3.8.2 VARIANT=stretch MODE=build
   - VERSION=3.8 VARIANT=stretch MODE=build
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
