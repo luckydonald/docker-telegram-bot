@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+
+
+# To add a new python version, just add a folder.
+# E.g. mkdir -p python3.8/stretch/onbuild
+
+
+
 set -e;
 declare -A blacklist=(
  [bot]=1  [templates]=1  [examples]=1
@@ -103,6 +110,7 @@ for folder in "${versions[@]}"; do
 		{wheezy,jessie,stretch}{/slim,/onbuild,} \
 		windows/{windowsservercore,nanoserver} \
 	; do
+	    echo "…"
 		dir="python$version/$v"
 		variant="$(basename "$v")"
         echo "dir: $dir"
