@@ -51,7 +51,7 @@ script:
           "$image-$DATE" \
           "$image-$TRAVIS_COMMIT" \
         ; do
-          travis_retry docker build --build-arg FOLDER="$FOLDER" --build-arg BASE_IMAGE_GIT_COMMIT="$TRAVIS_COMMIT" --build-arg BASE_IMAGE_GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" --build-arg IMAGE_NAME="$image_name" "$image" -t $image_name  -f $dockerfile_dir/Dockerfile .
+          travis_retry docker build --build-arg FOLDER="$FOLDER" --build-arg BASE_IMAGE_GIT_COMMIT="$TRAVIS_COMMIT" --build-arg BASE_IMAGE_GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" --build-arg IMAGE_NAME="$image_name" -t $image_name  -f $dockerfile_dir/Dockerfile .
         done;
       else
         docker pull "$image"
