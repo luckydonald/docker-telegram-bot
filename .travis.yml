@@ -61,8 +61,8 @@ script:
       # push/ignore
       if [ "$TRAVIS_BRANCH" == "master" -a "$MODE" == "build" ]; then
           travis_retry docker push "$image"
-          travis_retry docker push "$image-$TRAVIS_COMMIT"
           travis_retry docker push "$image-$DATE"
+          travis_retry docker push "$image-$TRAVIS_COMMIT"
           travis_retry docker push "$image-$DATE-$TRAVIS_COMMIT"
       fi
       # onbuild
@@ -73,13 +73,13 @@ script:
         # build/pull
         if [ "$MODE" == "build" ] ; then
           for image_name in \
-            "$image" \
-            "$image-$DATE-$TRAVIS_COMMIT" \
-            "$image-$DATE-$TRAVIS_COMMIT" \
-            "$image-$DATE" \
-            "$image-$TRAVIS_COMMIT" \
+            "$image-onbuild" \
+            "$image-$DATE-onbuild" \
+            "$image-$TRAVIS_COMMIT-onbuild" \
+            "$image-$DATE-$TRAVIS_COMMIT-onbuild" \
           ; do
             travis_retry docker build --build-arg FOLDER="$FOLDER" --build-arg BASE_IMAGE_GIT_COMMIT="$TRAVIS_COMMIT" --build-arg BASE_IMAGE_GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" --build-arg IMAGE_NAME="$image_name" "$image" -t $image_name  -f $dockerfile_dir/Dockerfile .
+            docker build --build-arg FOLDER="$FOLDER"  --build-arg GIT_COMMIT="$TRAVIS_COMMIT" --build-arg GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -  -f $onbuild_dir/Dockerfile .
           done;
           docker build --build-arg FOLDER="$FOLDER"  --build-arg GIT_COMMIT="$TRAVIS_COMMIT" --build-arg GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image-onbuild" -t "$image-$DATE-$TRAVIS_COMMIT-onbuild"  -t "$image-$DATE-onbuild"  -t "$image-$TRAVIS_COMMIT-onbuild"  -f $onbuild_dir/Dockerfile .
         else
