@@ -107,4 +107,3 @@ $ git commit -m "Updated to latest version"
 $ git push
 ```
 That's it. Wait for Sir Travis to be done.
-
