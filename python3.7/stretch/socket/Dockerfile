@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM python:3.7-socket
+FROM python:3.7-stretch
 
 ARG FOLDER=.
 ARG GROUP_UID=1020
@@ -15,23 +15,26 @@ ARG UWSGICURL_VERSION=master
 # latest GOSU_VERSION: https://github.com/tianon/gosu/releases
 ARG BASE_IMAGE_GIT_COMMIT
 ARG BASE_IMAGE_GIT_MESSAGE
+ARG IMAGE_NAME
 
 # copy that into the container
 ENV GROUP_UID $GROUP_UID
 ENV USER_UID $USER_UID
 ENV BASE_IMAGE_GIT_COMMIT $BASE_IMAGE_GIT_COMMIT
 ENV BASE_IMAGE_GIT_MESSAGE $BASE_IMAGE_GIT_MESSAGE
+ENV IMAGE_NAME $IMAGE_NAME
 # Sane defaults for pip
 ENV PIP_NO_CACHE_DIR off
 ENV PIP_DISABLE_PIP_VERSION_CHECK on
 
 MAINTAINER luckydonald
-LABEL docker.image.base="luckydonald/telegram-bot:3.7-socket"
+LABEL docker.image.base="luckydonald/telegram-bot:3.7-stretch-socket"
 LABEL docker.image.base.author="luckydonald"
 LABEL docker.image.base.url.github="https://github.com/luckydonald/docker-telegram-bot"
 LABEL docker.image.base.url.docker="https://hub.docker.com/r/luckydonald/telegram-bot/"
 LABEL docker.image.base.git.commit=$BASE_IMAGE_GIT_COMMIT
 LABEL docker.image.base.git.message=$BASE_IMAGE_GIT_MESSAGE
+LABEL docker.image.name=$IMAGE_NAME
 
 RUN set -x \
     && mkdir -p /app \

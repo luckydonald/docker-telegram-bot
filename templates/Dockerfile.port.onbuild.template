@@ -1,6 +1,9 @@
 FROM luckydonald/telegram-bot:%%PLACEHOLDER%%
+ARG IMAGE_NAME
+ENV IMAGE_NAME $IMAGE_NAME
 
-LABEL docker.image.base="luckydonald/telegram-bot:%%PLACEHOLDER%%-port-onbuild"
+LABEL docker.image.base="luckydonald/telegram-bot:%%PLACEHOLDER%%-onbuild"
+LABEL docker.image.name=$IMAGE_NAME
 
 # automatically install requirements.txt and copy the code folder
 ONBUILD COPY $FOLDER/requirements.txt   /config/

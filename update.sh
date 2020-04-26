@@ -108,18 +108,18 @@ for folder in "${versions[@]}"; do
 	# "python3.6/stretch/port/onbuild"
 	# $dir: "python3.6/stretch/port/onbuild"
 	# $version: "3.6"
-	# $template_version: "port" | "socket"
+	# $style: "port" | "socket"
 	# $v: "stretch/port/onbuild"
 	# $variant: "onbuild" | "alpine" | "windowsserver"
 	# $template: "debian" | "onbuild"
 	#
-    for template_version in \
+    for style in \
         port \
         socket \
     ; do
         for v in \
             alpine{3.4,3.6} \
-            {wheezy,jessie,stretch,buster}/${template_version}{/slim,/onbuild,} \
+            {wheezy,jessie,stretch,buster}/${style}{/slim,/onbuild,} \
             windows/{windowsservercore,nanoserver} \
         ; do
             dir="python$version/$v"
@@ -135,19 +135,26 @@ for folder in "${versions[@]}"; do
             echo "…"
             variant="$(basename "$v")"  # python3.6/port/onbuild -> onbuild    python3.6/port -> port
             echo "version: $version"
-            echo "template: $template_version";
+            echo "template: $style";
             echo "variant: $variant"
 
             case "$variant" in
-                slim|onbuild)  # python3.6/port/onbuild -> onbuild
+                slim|onbuild)  # python3.6/stretch/port/onbuild -> onbuild
                     template="$variant";  # onbuild
-                    variant=="$(basename "$(dirname "$dir")")";  # port
                     tag="$(basename "$(dirname "$dir")")";  # port
+                    variant="$(basename "$(dirname "$(dirname "$dir")")")";  # stretch
                 ;;
-                alpine*) template='alpine'; tag="${variant#alpine}" ;;
-                *) template='debian'; tag="$variant" ;;
+                alpine*)
+                    template='alpine';
+                    tag="${variant#alpine}";
+                ;;
+                *)  # python3.6/stretch/port -> debian
+                    template='debian';
+                    tag="$variant";  # stretch
+                    variant="$(basename "$(dirname "$dir")")";  # stretch
+                ;;
             esac
-            template="templates/Dockerfile.${template_version}.${template}.template"
+            template="templates/Dockerfile.${style}.${template}.template"
             echo "template: $template"
 
             if [[ "$version" == 2.* ]]; then
@@ -155,16 +162,23 @@ for folder in "${versions[@]}"; do
             else
                 { generated_warning; cat "$template"; } > "$dir/Dockerfile"
             fi
+            python_tag=$version-$variant
+            image_label=$version-$variant-$tag
+            onbuild_label=$version-$variant-$tag-onbuild
+
+            echo "TAGS2: $version - $variant - $tag - $style"
+            echo python_tag=$python_tag
+            echo image_label=$image_label
 
             sed -ri \
-                -e 's/^(FROM python):%%PLACEHOLDER%%/\1:'"$version-$tag"'/' \
-                -e 's/^(FROM luckydonald\/telegram-bot):%%PLACEHOLDER%%/\1:'"$version-$tag"'/' \
-                -e 's!^(LABEL docker\.image\.base="luckydonald/telegram-bot:)%%PLACEHOLDER%%(")!\1'"${version}-${tag}"'\2!' \
-                -e 's!^(LABEL docker\.image\.base="luckydonald/telegram-bot:)%%PLACEHOLDER%%(-onbuild")!\1'"${version}-${tag}"'\2!' \
+                -e 's/^(FROM python):%%PLACEHOLDER%%/\1:'"${python_tag}"'/' \
+                -e 's/^(FROM luckydonald\/telegram-bot):%%PLACEHOLDER%%/\1:'"${image_label}"'/' \
+                -e 's!^(LABEL docker\.image\.base="luckydonald/telegram-bot:)%%PLACEHOLDER%%(")!\1'"${image_label}"'\2!' \
+                -e 's!^(LABEL docker\.image\.base="luckydonald/telegram-bot:)%%PLACEHOLDER%%(-onbuild")!\1'"${image_label}"'\2!' \
                 "$dir/Dockerfile"
 
             case "$v" in
-                */onbuild) ;;
+                */onbuild) ;;  # don't list onbuilds, those are done by travis anyway as separate secondary step as they need the previous image.
                 windows/*)
                     appveyorEnv="$appveyorEnv"'\n    - version: '"$version"'\n      variant: '"$variant"
                     ;;

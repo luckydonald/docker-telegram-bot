@@ -4,9 +4,12 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM luckydonald/telegram-bot:3.8.2-socket
+FROM luckydonald/telegram-bot:3.8.2-buster-socket
+ARG IMAGE_NAME
+ENV IMAGE_NAME $IMAGE_NAME
 
-LABEL docker.image.base="luckydonald/telegram-bot:3.8.2-socket-onbuild"
+LABEL docker.image.base="luckydonald/telegram-bot:3.8.2-buster-socket-onbuild"
+LABEL docker.image.name=$IMAGE_NAME
 
 # automatically install requirements.txt and copy the code folder
 ONBUILD COPY $FOLDER/requirements.txt   /config/
