@@ -53,7 +53,7 @@ RUN set -x \
     && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
     && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
-    && echo '# gnupg ipv6 workaround from https://github.com/f-secure-foundry/usbarmory-debian-base_image/issues/9#issuecomment-451635505'
+    && echo '# gnupg ipv6 workaround from https://github.com/f-secure-foundry/usbarmory-debian-base_image/issues/9#issuecomment-451635505' \
     && echo "disable-ipv6" >> ${GNUPGHOME}/dirmngr.conf \
     && echo '# gnupng name resolution failure workaround from https://github.com/f-secure-foundry/usbarmory-debian-base_image/issues/9#issuecomment-502449504' \
     && ping -c 10 ha.pool.sks-keyservers.net \
