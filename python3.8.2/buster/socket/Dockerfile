@@ -11,6 +11,7 @@ ARG GROUP_UID=1020
 ARG USER_UID=1020
 ARG GOSU_VERSION=1.10
 ARG GOSU_KEY=B42F6819007F00F88E364FD4036A9C25BF357DD4
+ARG KEYSERVER=pool.sks-keyservers.net
 ARG UWSGICURL_VERSION=master
 # latest GOSU_VERSION: https://github.com/tianon/gosu/releases
 ARG BASE_IMAGE_GIT_COMMIT
@@ -41,11 +42,11 @@ RUN set -x \
     # install stuff we need
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends \
-    # https
+        # https
         ca-certificates \
-    # utilities
+        # utilities
         nano \
-    # install latest pip and latest uwsgi curl
+        # install latest pip and latest uwsgi curl
     && pip install --upgrade pip -e "git://github.com/luckydonald-forks/uwsgi-tools.git@$UWSGICURL_VERSION#egg=uwsgi-tools" \
     && rm -rfv /var/lib/apt/lists/* \
     # install gosu (root stepdown)
@@ -53,13 +54,25 @@ RUN set -x \
     && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
     && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
-    && echo '# gnupg ipv6 workaround from https://github.com/f-secure-foundry/usbarmory-debian-base_image/issues/9#issuecomment-451635505' \
-    && echo "disable-ipv6" >> ${GNUPGHOME}/dirmngr.conf \
-    && echo '# gnupng name resolution failure workaround from https://github.com/f-secure-foundry/usbarmory-debian-base_image/issues/9#issuecomment-502449504' \
-    && ping -c 10 ha.pool.sks-keyservers.net \
-    && echo "# let's try grabbing those keys..." \
-    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys $GOSU_KEY \
-    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+    && ( \
+        ( \
+         ( \
+            echo '# gnupng name resolution failure workaround from https://github.com/f-secure-foundry/usbarmory-debian-base_image/issues/9#issuecomment-502449504' \
+            && ping -c 10 $KEYSERVER \
+            ; echo "# let's try grabbing those keys..." \
+            && gpg --keyserver $KEYSERVER --recv-keys $GOSU_KEY \
+         ) || ( \
+            echo "# Well, that failed" \
+            echo '# gnupng name resolution failure workaround from https://github.com/f-secure-foundry/usbarmory-debian-base_image/issues/9#issuecomment-502449504' \
+            && ping -c 10 $KEYSERVER \
+            ; echo '# gnupg ipv6 workaround from https://github.com/f-secure-foundry/usbarmory-debian-base_image/issues/9#issuecomment-451635505' \
+            && echo "disable-ipv6" >> ${GNUPGHOME}/dirmngr.conf \
+            && gpg --keyserver $KEYSERVER --recv-keys $GOSU_KEY \
+         ) \
+         && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+        ) \
+        || echo 'failed to get the key.' \
+    ) \
     && rm -rfv "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && groupadd -r uwsgi --gid ${GROUP_UID} && useradd -r -g uwsgi uwsgi --uid ${USER_UID} \
