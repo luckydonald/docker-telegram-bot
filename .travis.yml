@@ -39,9 +39,8 @@ script:
       set -x
       ls -lah .
       ls -lah $FOLDER
-      ls -lah bot/entrypoint.sh
+      ls -lah $FOLDER/*/
       mkdir -p /var/lib/docker/tmp/
-      ls -lah $FOLDER/entrypoint.sh
       # build/pull
       DATE=$(date +%Y-%m-%d)
       if [ "$MODE" == "build" ] ; then
