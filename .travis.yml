@@ -45,7 +45,15 @@ script:
       # build/pull
       DATE=$(date +%Y-%m-%d)
       if [ "$MODE" == "build" ] ; then
-        travis_retry docker build --build-arg FOLDER="$FOLDER" --build-arg BASE_IMAGE_GIT_COMMIT="$TRAVIS_COMMIT" --build-arg BASE_IMAGE_GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image" -t "$image-$DATE-$TRAVIS_COMMIT"  -t "$image-$DATE"  -t "$image-$TRAVIS_COMMIT" -f $dockerfile_dir/Dockerfile .
+        for image_name in \
+          "$image" \
+          "$image-$DATE-$TRAVIS_COMMIT" \
+          "$image-$DATE-$TRAVIS_COMMIT" \
+          "$image-$DATE" \
+          "$image-$TRAVIS_COMMIT" \
+        ; do
+          travis_retry docker build --build-arg FOLDER="$FOLDER" --build-arg BASE_IMAGE_GIT_COMMIT="$TRAVIS_COMMIT" --build-arg BASE_IMAGE_GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" --build-arg IMAGE_NAME="$image_name" "$image" -t $image_name  -f $dockerfile_dir/Dockerfile .
+        done;
       else
         docker pull "$image"
       fi
@@ -65,6 +73,15 @@ script:
         docker tag "$image" "$onbuildFrom"
         # build/pull
         if [ "$MODE" == "build" ] ; then
+          for image_name in \
+            "$image" \
+            "$image-$DATE-$TRAVIS_COMMIT" \
+            "$image-$DATE-$TRAVIS_COMMIT" \
+            "$image-$DATE" \
+            "$image-$TRAVIS_COMMIT" \
+          ; do
+            travis_retry docker build --build-arg FOLDER="$FOLDER" --build-arg BASE_IMAGE_GIT_COMMIT="$TRAVIS_COMMIT" --build-arg BASE_IMAGE_GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" --build-arg IMAGE_NAME="$image_name" "$image" -t $image_name  -f $dockerfile_dir/Dockerfile .
+          done;
           docker build --build-arg FOLDER="$FOLDER"  --build-arg GIT_COMMIT="$TRAVIS_COMMIT" --build-arg GIT_MESSAGE="$TRAVIS_COMMIT_MESSAGE" -t "$image-onbuild" -t "$image-$DATE-$TRAVIS_COMMIT-onbuild"  -t "$image-$DATE-onbuild"  -t "$image-$TRAVIS_COMMIT-onbuild"  -f $onbuild_dir/Dockerfile .
         else
           docker pull "$image-onbuild"
