@@ -105,57 +105,76 @@ for folder in "${versions[@]}"; do
 
 	echo "$version: $fullVersion"
 
-	for v in \
-		alpine{3.4,3.6} \
-		{wheezy,jessie,stretch,buster}{/slim,/onbuild,} \
-		windows/{windowsservercore,nanoserver} \
-	; do
-	    echo "…"
-		dir="python$version/$v"
-		variant="$(basename "$v")"
-        echo "dir: $dir"
-        echo "version: $version"
-        echo "variant: $variant"
+	# "python3.6/stretch/port/onbuild"
+	# $dir: "python3.6/stretch/port/onbuild"
+	# $version: "3.6"
+	# $template_version: "port" | "socket"
+	# $v: "stretch/port/onbuild"
+	# $variant: "onbuild" | "alpine" | "windowsserver"
+	# $template: "debian" | "onbuild"
+	#
+    for template_version in \
+        port \
+        socket \
+    ; do
+        for v in \
+            alpine{3.4,3.6} \
+            {wheezy,jessie,stretch,buster}/${template_version}{/slim,/onbuild,} \
+            windows/{windowsservercore,nanoserver} \
+        ; do
+            dir="python$version/$v"
+            echo "dir: $dir"
 
-		# check if exists
-		if [ ! -d "$dir" ]; then
-		    echo "folder: not found, skipping"
-		    continue
-        fi
-        echo "folder: found, let's go"
+            # check if exists
+            if [ ! -d "$dir" ]; then
+                echo "folder: not found, skipping"
+                continue
+            fi
+            echo "folder: found, let's go"
 
-		case "$variant" in
-			slim|onbuild|windowsservercore) template="$variant"; tag="$(basename "$(dirname "$dir")")" ;;
-			alpine*) template='alpine'; tag="${variant#alpine}" ;;
-			*) template='debian'; tag="$variant" ;;
-		esac
-		template="templates/Dockerfile.socket.${template}.template"
-		echo "template: $template"
+            echo "…"
+            variant="$(basename "$v")"  # python3.6/port/onbuild -> onbuild    python3.6/port -> port
+            echo "version: $version"
+            echo "template: $template_version";
+            echo "variant: $variant"
 
-		if [[ "$version" == 2.* ]]; then
-			echo "  TODO: vimdiff ${versions[-1]}/$v/Dockerfile $version/$v/Dockerfile"
-		else
-			{ generated_warning; cat "$template"; } > "$dir/Dockerfile"
-		fi
+            case "$variant" in
+                slim|onbuild)  # python3.6/port/onbuild -> onbuild
+                    template="$variant";  # onbuild
+                    variant=="$(basename "$(dirname "$dir")")";  # port
+                    tag="$(basename "$(dirname "$dir")")";  # port
+                ;;
+                alpine*) template='alpine'; tag="${variant#alpine}" ;;
+                *) template='debian'; tag="$variant" ;;
+            esac
+            template="templates/Dockerfile.${template_version}.${template}.template"
+            echo "template: $template"
 
-		sed -ri \
-			-e 's/^(FROM python):%%PLACEHOLDER%%/\1:'"$version-$tag"'/' \
-			-e 's/^(FROM luckydonald\/telegram-bot):%%PLACEHOLDER%%/\1:'"$version-$tag"'/' \
-			-e 's!^(LABEL docker\.image\.base="luckydonald/telegram-bot:)%%PLACEHOLDER%%(")!\1'"${version}-${tag}"'\2!' \
-			-e 's!^(LABEL docker\.image\.base="luckydonald/telegram-bot:)%%PLACEHOLDER%%(-onbuild")!\1'"${version}-${tag}"'\2!' \
-			"$dir/Dockerfile"
+            if [[ "$version" == 2.* ]]; then
+                echo "  TODO: vimdiff ${versions[-1]}/$v/Dockerfile $version/$v/Dockerfile"
+            else
+                { generated_warning; cat "$template"; } > "$dir/Dockerfile"
+            fi
 
-		case "$v" in
-			*/onbuild) ;;
-			windows/*)
-				appveyorEnv="$appveyorEnv"'\n    - version: '"$version"'\n      variant: '"$variant"
-				;;
-			*)
-				travisEnv="$travisEnv"'\n  - VERSION='"$version"' VARIANT='"$v"' MODE=build'
-				# travisEnv="$travisEnv"'\n  - VERSION='"$version"' VARIANT='"$v"' MODE=tests'
-				;;
-		esac
-	done
+            sed -ri \
+                -e 's/^(FROM python):%%PLACEHOLDER%%/\1:'"$version-$tag"'/' \
+                -e 's/^(FROM luckydonald\/telegram-bot):%%PLACEHOLDER%%/\1:'"$version-$tag"'/' \
+                -e 's!^(LABEL docker\.image\.base="luckydonald/telegram-bot:)%%PLACEHOLDER%%(")!\1'"${version}-${tag}"'\2!' \
+                -e 's!^(LABEL docker\.image\.base="luckydonald/telegram-bot:)%%PLACEHOLDER%%(-onbuild")!\1'"${version}-${tag}"'\2!' \
+                "$dir/Dockerfile"
+
+            case "$v" in
+                */onbuild) ;;
+                windows/*)
+                    appveyorEnv="$appveyorEnv"'\n    - version: '"$version"'\n      variant: '"$variant"
+                    ;;
+                *)
+                    travisEnv="$travisEnv"'\n  - VERSION='"$version"' VARIANT='"$v"' MODE=build'
+                    # travisEnv="$travisEnv"'\n  - VERSION='"$version"' VARIANT='"$v"' MODE=tests'
+                    ;;
+            esac
+        done
+    done
 done
 echo -e '=== <travisEnv> ==='"$travisEnv\n"'=== </travisEnv> ==='
 travis=$(sed '/env:/,/before_install:/c\env:'"$travisEnv"'\nbefore_install:' .travis.yml)

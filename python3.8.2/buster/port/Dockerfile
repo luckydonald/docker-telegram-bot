@@ -1,4 +1,10 @@
-FROM python:%%PLACEHOLDER%%
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "update.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
+
+FROM python:3.8.2-port
 
 ARG FOLDER=.
 ARG GROUP_UID=1020
@@ -20,7 +26,7 @@ ENV PIP_NO_CACHE_DIR off
 ENV PIP_DISABLE_PIP_VERSION_CHECK on
 
 MAINTAINER luckydonald
-LABEL docker.image.base="luckydonald/telegram-bot:%%PLACEHOLDER%%"
+LABEL docker.image.base="luckydonald/telegram-bot:3.8.2-port"
 LABEL docker.image.base.author="luckydonald"
 LABEL docker.image.base.url.github="https://github.com/luckydonald/docker-telegram-bot"
 LABEL docker.image.base.url.docker="https://hub.docker.com/r/luckydonald/telegram-bot/"
@@ -58,10 +64,10 @@ HEALTHCHECK CMD ["/healthcheck.sh", "--timeout", "5"]
 HEALTHCHECK --start-period=30s --interval=15s --timeout=5s CMD ["/healthcheck.sh", "--timeout", "5"]
 
 
-COPY $FOLDER/socket/entrypoint.sh      /
-COPY $FOLDER/socket/healthcheck.sh     /
-COPY $FOLDER/socket/uwsgi.ini          /config/
-COPY $FOLDER/requirements.txt          /config/
+COPY $FOLDER/entrypoint.sh      /
+COPY $FOLDER/healthcheck.sh     /
+COPY $FOLDER/uwsgi.ini          /config/
+COPY $FOLDER/requirements.txt   /config/
 RUN chmod +x /entrypoint.sh /healthcheck.sh && pip install -r /config/requirements.txt
 
 COPY $FOLDER/code /app

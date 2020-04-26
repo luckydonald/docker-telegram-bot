@@ -58,10 +58,10 @@ HEALTHCHECK CMD ["/healthcheck.sh", "--timeout", "5"]
 HEALTHCHECK --start-period=30s --interval=15s --timeout=5s CMD ["/healthcheck.sh", "--timeout", "5"]
 
 
-COPY $FOLDER/socket/entrypoint.sh      /
-COPY $FOLDER/socket/healthcheck.sh     /
-COPY $FOLDER/socket/uwsgi.ini          /config/
-COPY $FOLDER/requirements.txt          /config/
+COPY $FOLDER/entrypoint.sh      /
+COPY $FOLDER/healthcheck.sh     /
+COPY $FOLDER/uwsgi.ini          /config/
+COPY $FOLDER/requirements.txt   /config/
 RUN chmod +x /entrypoint.sh /healthcheck.sh && pip install -r /config/requirements.txt
 
 COPY $FOLDER/code /app

@@ -1,4 +1,10 @@
-FROM python:%%PLACEHOLDER%%
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "update.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
+
+FROM python:3.8-socket
 
 ARG FOLDER=.
 ARG GROUP_UID=1020
@@ -20,7 +26,7 @@ ENV PIP_NO_CACHE_DIR off
 ENV PIP_DISABLE_PIP_VERSION_CHECK on
 
 MAINTAINER luckydonald
-LABEL docker.image.base="luckydonald/telegram-bot:%%PLACEHOLDER%%"
+LABEL docker.image.base="luckydonald/telegram-bot:3.8-socket"
 LABEL docker.image.base.author="luckydonald"
 LABEL docker.image.base.url.github="https://github.com/luckydonald/docker-telegram-bot"
 LABEL docker.image.base.url.docker="https://hub.docker.com/r/luckydonald/telegram-bot/"
