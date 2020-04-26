@@ -57,7 +57,7 @@ RUN set -x \
     && echo "disable-ipv6" >> ${GNUPGHOME}/dirmngr.conf \
     && echo '# gnupng name resolution failure workaround from https://github.com/f-secure-foundry/usbarmory-debian-base_image/issues/9#issuecomment-502449504' \
     && ping -c 10 ha.pool.sks-keyservers.net \
-    && echo '# let\'s try grabbing those keys...' \
+    && echo "# let's try grabbing those keys..." \
     && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys $GOSU_KEY \
     && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
     && rm -rfv "$GNUPGHOME" /usr/local/bin/gosu.asc \
