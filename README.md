@@ -41,17 +41,17 @@ For version pinning we serve the image with the following tag structure:
     - <code>python<i><b>{version}</b></i>-{flavor}-port-<i><b>{YYYY-MM-DD}</b></i></code>
     - <code>python<i><b>{version}</b></i>-{flavor}-port-<i><b>{YYYY-MM-DD}</b></i>-<i><b>{commit}</b></i></code>
 - <code>python<i><b>{version}</b></i>-{flavor}-port-onbuild</code>
-    - <code>python<i><b>{version}</b></i>-{flavor}-port-onbuild-<i><b>{commit}</b></i></code>
-    - <code>python<i><b>{version}</b></i>-{flavor}-port-onbuild-<i><b>{YYYY-MM-DD}</b></i></code>
-    - <code>python<i><b>{version}</b></i>-{flavor}-port-onbuild-<i><b>{YYYY-MM-DD}</b></i>-<i><b>{commit}</b></i></code>
+    - <code>python<i><b>{version}</b></i>-{flavor}-port-<i><b>{commit}</b></i>-onbuild</code>
+    - <code>python<i><b>{version}</b></i>-{flavor}-port-<i><b>{YYYY-MM-DD}</b></i>-onbuild</code>
+    - <code>python<i><b>{version}</b></i>-{flavor}-port-<i><b>{YYYY-MM-DD}</b></i>-<i><b>{commit}</b></i>-onbuild</code>
 - <code>python<i><b>{version}</b></i>-{flavor}-socket</code>
     - <code>python<i><b>{version}</b></i>-{flavor}-socket-<i><b>{commit}</b></i></code>
     - <code>python<i><b>{version}</b></i>-{flavor}-socket-<i><b>{YYYY-MM-DD}</b></i></code>
     - <code>python<i><b>{version}</b></i>-{flavor}-socket-<i><b>{YYYY-MM-DD}</b></i>-<i><b>{commit}</b></i></code>
 - <code>python<i><b>{version}</b></i>-{flavor}-socket-onbuild</code>
-    - <code>python<i><b>{version}</b></i>-{flavor}-socket-onbuild-<i><b>{commit}</b></i></code>
-    - <code>python<i><b>{version}</b></i>-{flavor}-socket-onbuild-<i><b>{YYYY-MM-DD}</b></i></code>
-    - <code>python<i><b>{version}</b></i>-{flavor}-socket-onbuild-<i><b>{YYYY-MM-DD}</b></i>-<i><b>{commit}</b></i></code>
+    - <code>python<i><b>{version}</b></i>-{flavor}-socket-<i><b>{commit}</b></i>-onbuild</code>
+    - <code>python<i><b>{version}</b></i>-{flavor}-socket-<i><b>{YYYY-MM-DD}</b></i>-onbuild</code>
+    - <code>python<i><b>{version}</b></i>-{flavor}-socket-<i><b>{YYYY-MM-DD}</b></i>-<i><b>{commit}</b></i>-onbuild</code>
 
 The same with <code>-port</code> instead of <code>-socket</code>
 
