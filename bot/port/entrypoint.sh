@@ -24,9 +24,9 @@ if [ "$1" == '/usr/local/bin/uwsgi' ]; then
     echo "command is uwsgi executable"
     shift;  # remove $1
 
-    PORT="${PORT:-8080}";
+    HTTP_PORT="${HTTP_PORT:-8080}";
     CMD="/usr/local/bin/uwsgi";
-    ARGS="--ini /config/uwsgi.ini --need-app --die-on-term --http-socket=${PORT} --mount /${URL_PATH}=main.py $@ ${MORE_UWSGI_ARGS:-}";
+    ARGS="--ini /config/uwsgi.ini --need-app --die-on-term --http=${PORT} --mount /${URL_PATH}=main.py $@ ${MORE_UWSGI_ARGS:-}";
 
     echo "exec gosu $USER_UID:$GROUP_UID $CMD $ARGS";
     trap cleanup EXIT;

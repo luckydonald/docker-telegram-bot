@@ -66,7 +66,7 @@ Default: `/healthcheck`
 Allows to overwrite the place where we expect the socket.
 Default: `/sockets/bots/${URL_PATH}.sock`
 
-###### `PORT` (Only `-port`):
+###### `HTTP_PORT`: _(Only the `port` image flavor)_
 Allows to overwrite the http port we're listening on.
 Default: `8080`
 
