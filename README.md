@@ -62,9 +62,17 @@ _Need something else? Create an issue!_
 Which url to call?
 Default: `/healthcheck`
 
-###### `SOCKET_PATH` (Only `-socket`):
+###### `SOCKET_PATH`: _(Only the `socket` image flavor)_
 Allows to overwrite the place where we expect the socket.
 Default: `/sockets/bots/${URL_PATH}.sock`
+
+###### `SOCKET_TYPE`: _(Only the `socket` image flavor)_
+Allows to overwrite the type of the file socket to use.
+All [options](https://uwsgi-docs.readthedocs.io/en/latest/Options.html#uwsgi-core) ending on `*-socket`.
+
+Currently that's `uwsgi`, `http, `https`, as well as the lesser known , `suwsgi`, `ssl`, `http11`, `fastcgi`, `fastcgi-nph`, `scgi`, `scgi-nph`, `raw` and finally `puwsgi`.
+
+Default: `uwsgi`
 
 ###### `HTTP_PORT`: _(Only the `port` image flavor)_
 Allows to overwrite the http port we're listening on.

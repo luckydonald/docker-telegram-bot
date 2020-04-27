@@ -24,9 +24,10 @@ if [ "$1" == '/usr/local/bin/uwsgi' ]; then
     echo "command is uwsgi executable"
     shift;  # remove $1
 
+    SOCKET_TYPE="${SOCKET_TYPE:-uwsgi}
     SOCKET_PATH="${SOCKET_PATH:-/sockets/bots/$URL_PATH.sock}";
     CMD="/usr/local/bin/uwsgi";
-    ARGS="--ini /config/uwsgi.ini --need-app --die-on-term --socket=${SOCKET_PATH} --mount /${URL_PATH}=main.py $@ ${MORE_UWSGI_ARGS:-}";
+    ARGS="--ini /config/uwsgi.ini --need-app --die-on-term --socket-${SOCKET_TYPE}=${SOCKET_PATH} --mount /${URL_PATH}=main.py $@ ${MORE_UWSGI_ARGS:-}";
 
     function cleanup {
         # remove socket
